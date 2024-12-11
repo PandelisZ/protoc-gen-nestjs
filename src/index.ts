@@ -1,8 +1,8 @@
 import { createEcmaScriptPlugin } from "@bufbuild/protoplugin";
 import { version } from "../package.json";
-import { localName, GeneratedFile, ImportSymbol } from "@bufbuild/protoplugin/ecmascript";
-import { DescMethod, DescService, MethodKind } from "@bufbuild/protobuf";
-import type { Schema } from "@bufbuild/protoplugin/ecmascript";
+import { GeneratedFile, ImportSymbol, safeIdentifier } from "@bufbuild/protoplugin";
+import { DescMethod, DescService } from "@bufbuild/protobuf";
+import type { Schema } from "@bufbuild/protoplugin";
 
 export const protocGenNestjs = createEcmaScriptPlugin({
   name: "protoc-gen-nestjs",
@@ -22,9 +22,8 @@ function generateTs(schema: Schema) {
 }
 
 function printService(f: GeneratedFile, service: DescService) {
-  const localServiceName = localName(service);
   f.print(f.jsDoc(service));
-  f.print`export interface ${localServiceName}Controller {`;
+  f.print`export interface ${safeIdentifier(service.name)}Controller {`;
   service.methods.forEach((method, i) => {
     if (i !== 0) {
       f.print();
@@ -35,15 +34,24 @@ function printService(f: GeneratedFile, service: DescService) {
 
   const GrpcMethod = f.import("GrpcMethod", "@nestjs/microservices");
   const GrpcStreamMethod = f.import("GrpcStreamMethod", "@nestjs/microservices");
-  const unaryReqMethods = service.methods.filter((method) =>
-    [MethodKind.Unary, MethodKind.ServerStreaming].includes(method.methodKind)
-  );
-  const streamReqMethods = service.methods.filter((method) =>
-    [MethodKind.BiDiStreaming, MethodKind.ClientStreaming].includes(method.methodKind)
+  const unaryReqMethods = service.methods.filter((method) => {
+    const unaryMethodTypes: Array<typeof method.methodKind> = [
+      'server_streaming',
+      'unary'
+    ]
+    unaryMethodTypes.includes(method.methodKind)
+  });
+  const streamReqMethods = service.methods.filter((method) => {
+    const streamReq: Array<typeof method.methodKind> = [
+      'bidi_streaming',
+      'client_streaming',
+    ]
+    streamReq.includes(method.methodKind)
+  }
   );
 
   f.print();
-  f.print`${f.exportDecl("function", localServiceName + "Methods")}() {`;
+  f.print`${f.export("function", service.name + "Methods")}() {`;
   f.print("  return function (constructor: Function) {");
   printGrpcMethodAnnotations(f, GrpcMethod, unaryReqMethods, service);
   printGrpcMethodAnnotations(f, GrpcStreamMethod, streamReqMethods, service);
@@ -53,14 +61,18 @@ function printService(f: GeneratedFile, service: DescService) {
 
 function printMethod(f: GeneratedFile, method: DescMethod) {
   const Observable = f.import("Observable", "rxjs");
-  const isStreamReq = [MethodKind.BiDiStreaming, MethodKind.ClientStreaming].includes(method.methodKind);
-  const isStreamRes = method.methodKind !== MethodKind.Unary;
+  const inputType = f.importShape(method.input);
+  const outputType = f.importShape(method.output);
 
-  const reqType = isStreamReq ? [Observable, "<", method.input, ">"] : [method.input];
-  const resType = isStreamRes ? [Observable, "<", method.output, ">"] : ["Promise<", method.output, ">"];
+  const isStreamReq = ['bidi_streaming', 'client_streaming'].includes(method.methodKind);
+  const isStreamRes = method.methodKind !== 'unary';
+
+
+  const reqType = isStreamReq ? [Observable, "<", inputType, ">"] : [inputType];
+  const resType = isStreamRes ? [Observable, "<", outputType, ">"] : ["Promise<", outputType, ">"];
 
   f.print(f.jsDoc(method, "  "));
-  f.print`  ${localName(method)}(request: ${reqType}): ${resType};`;
+  f.print`  ${method.localName}(request: ${reqType}): ${resType};`;
 }
 
 function printGrpcMethodAnnotations(
@@ -69,10 +81,10 @@ function printGrpcMethodAnnotations(
   methods: DescMethod[],
   service: DescService
 ) {
-  const methodNames = methods.map((method) => `"${localName(method)}"`).join(", ");
+  const methodNames = methods.map((method) => `"${method.localName}"`).join(", ");
 
   f.print`    for (const method of [${methodNames}]) {`;
   f.print`      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);`;
-  f.print`      ${annotation}("${localName(service)}", method)(constructor.prototype[method], method, descriptor);`;
+  f.print`      ${annotation}("${safeIdentifier(service.name)}", method)(constructor.prototype[method], method, descriptor);`;
   f.print`    }`;
 }
