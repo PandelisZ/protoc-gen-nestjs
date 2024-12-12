@@ -14,7 +14,7 @@
   "devDependencies": {
     "@bufbuild/protoc-gen-es": "^2.2.3",
     "@types/node": "^22.10.2",
-    "protoc-gen-nestjs": "workspace:*",
+    "@pandelis/protoc-gen-nestjs": "workspace:*",
     "tsx": "^4.19.2"
   },
   "dependencies": {
