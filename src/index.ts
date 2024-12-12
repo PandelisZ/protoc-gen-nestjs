@@ -18,7 +18,7 @@ function generateTs(schema: Schema) {
     for (const service of file.services) {
       printService(f, service);
 
-      printClient(f, service, file.proto.name);
+      printClient(f, service, schema.proto.sourceFileDescriptors[0].package);
     }
   }
 }
