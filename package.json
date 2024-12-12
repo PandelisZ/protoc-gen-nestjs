@@ -1,6 +1,6 @@
 {
   "name": "@pandelis/protoc-gen-nestjs",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "The code generator for Protocol Buffers for NestJS",
   "bin": {
     "protoc-gen-nestjs": "bin/protoc-gen-nestjs"
