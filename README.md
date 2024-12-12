@@ -12,6 +12,11 @@ Highly inspired by [ts-proto](https://github.com/stephenh/ts-proto) and generate
 - Generates interfaces of controllers from gRPC services.
 - Generates decorators that unifies `@GrpcMethod` and `@GrpcStreamMethod`.
 
+
+## Knwon limitations
+
+- Currently, only Promises so no streaming via `Observable` is supported.
+
 ## Installation
 
 `@bufbuild/protoc-gen-es` and `@bufbuild/protobuf` is required. See [protoc-gen-es's doc](https://github.com/bufbuild/protobuf-es/tree/main/packages/protoc-gen-es#installation) for detail.
@@ -95,5 +100,3 @@ export class ElizaController implements ElizaServiceController {
   }
 }
 ```
-
-Streaming is also supported. See [NestJS's doc](https://docs.nestjs.com/microservices/grpc) for detail.
