@@ -18,7 +18,7 @@ function generateTs(schema: Schema) {
     for (const service of file.services) {
       printService(f, service);
 
-      printClient(f, service, file.proto.package);
+      printClient(f, service, file.proto.name);
     }
   }
 }
@@ -128,7 +128,7 @@ function printClient(f: GeneratedFile, service: DescService, packageName: string
 
   f.print()
 
-  f.print("export const INJECTED_", safeIdentifier(service.name).toUpperCase(), "_PACKAGE = '", safeIdentifier(packageName), "';");
+  f.print("export const INJECTED_", safeIdentifier(service.name).toUpperCase(), "_PACKAGE = '", packageName, "';");
 
   f.print()
 
