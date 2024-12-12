@@ -18,7 +18,7 @@ function generateTs(schema: Schema) {
     for (const service of file.services) {
       printService(f, service);
 
-      printClient(f, service);
+      printClient(f, service, file.proto.package);
     }
   }
 }
@@ -118,7 +118,7 @@ function printClientMethod(f: GeneratedFile, method: DescMethod) {
 
 }
 
-function printClient(f: GeneratedFile, service: DescService) {
+function printClient(f: GeneratedFile, service: DescService, packageName: string) {
 
   const OnModuleInit = f.import("OnModuleInit", "@nestjs/common");
   const Controller = safeIdentifier(service.name) + "Service";
@@ -128,7 +128,7 @@ function printClient(f: GeneratedFile, service: DescService) {
 
   f.print()
 
-  f.print("export const INJECTED_", safeIdentifier(service.name).toUpperCase(), "_PACKAGE = '", safeIdentifier(service.name), "';");
+  f.print("export const INJECTED_", safeIdentifier(service.name).toUpperCase(), "_PACKAGE = '", safeIdentifier(packageName), "';");
 
   f.print()
 
