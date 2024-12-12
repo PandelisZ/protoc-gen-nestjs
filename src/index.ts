@@ -142,7 +142,7 @@ function printClient(f: GeneratedFile, service: DescService, packageName: string
 
   f.print("constructor(@", Inject, "(INJECTED_", safeIdentifier(service.name).toUpperCase(), "_PACKAGE) ", "private grpc: ", ClientGrpc, ") {}");
   f.print();
-  f.print("onModuleInit() { this.client = this.grpc.getService<", Controller, ">(", safeIdentifier(service.name), ") }");
+  f.print("onModuleInit() { this.client = this.grpc.getService<", Controller, ">('", safeIdentifier(service.name), "') }");
 
 
   f.print()
