@@ -128,7 +128,7 @@ function printClient(f: GeneratedFile, service: DescService) {
 
   f.print()
 
-  f.print("export const INJECTED_", safeIdentifier(service.name).toUpperCase(), "_PACKAGE = 'INJECTED_", safeIdentifier(service.name).toUpperCase(), "_PACKAGE';");
+  f.print("export const INJECTED_", safeIdentifier(service.name).toUpperCase(), "_PACKAGE = '", safeIdentifier(service.name), "';");
 
   f.print()
 
