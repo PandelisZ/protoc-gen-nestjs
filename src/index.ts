@@ -127,7 +127,6 @@ function printClient(f: GeneratedFile, service: DescService, packageName: string
   const Injectable = f.import("Injectable", "@nestjs/common");
   const Inject = f.import("Inject", "@nestjs/common");
   const ClientGrpc = f.import("ClientGrpc", "@nestjs/microservices");
-  // f.print("import { Metadata } from '@grpc/grpc-js';");
 
 
   f.print()
