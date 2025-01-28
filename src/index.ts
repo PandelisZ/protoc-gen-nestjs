@@ -65,6 +65,7 @@ function printMethod(f: GeneratedFile, method: DescMethod) {
   const Observable = f.import("Observable", "rxjs");
   const inputType = f.importShape(method.input);
   const outputType = f.importShape(method.output);
+  const Metadata = f.import("Metadata", "@grpc/grpc-js");
 
   const isStreamReq = ['bidi_streaming', 'client_streaming'].includes(method.methodKind);
   const isStreamRes = method.methodKind !== 'unary';
@@ -74,7 +75,7 @@ function printMethod(f: GeneratedFile, method: DescMethod) {
   const resType = isStreamRes ? [Observable, "<", outputType, ">"] : ["Promise<", outputType, ">"];
 
   f.print(f.jsDoc(method, "  "));
-  f.print`  ${method.localName}(request: ${reqType}): ${resType};`;
+  f.print`  ${method.localName}(request: ${reqType}, metadata?: ${Metadata}): ${resType};`;
 }
 
 function printGrpcMethodAnnotations(
@@ -96,6 +97,7 @@ function printClientMethod(f: GeneratedFile, method: DescMethod) {
   const firstValueFrom = f.import("firstValueFrom", "rxjs");
   const inputType = f.importShape(method.input);
   const outputType = f.importShape(method.output);
+  const Metadata = f.import("Metadata", "@grpc/grpc-js");
 
   const isStreamReq = ['bidi_streaming', 'client_streaming'].includes(method.methodKind);
   const isStreamRes = method.methodKind !== 'unary';
@@ -105,12 +107,12 @@ function printClientMethod(f: GeneratedFile, method: DescMethod) {
   const resType = isStreamRes ? [Observable, "<", outputType, ">"] : ["Promise<", outputType, ">"];
 
   f.print(f.jsDoc(method, "  "));
-  f.print`  ${method.localName}(request: ${reqType}): ${resType} {`;
+  f.print`  ${method.localName}(request: ${reqType}, metadata = new ${Metadata}()): ${resType} {`;
 
   if (isStreamRes) {
-    f.print("    return this.client.", method.localName, "(request);");
+    f.print("    return this.client.", method.localName, "(request, metadata);");
   } else {
-    f.print("    return ", firstValueFrom, "(this.client.", method.localName, "(request));");
+    f.print("    return ", firstValueFrom, "(this.client.", method.localName, "(request, metadata));");
   }
 
   f.print("  }")
@@ -126,6 +128,7 @@ function printClient(f: GeneratedFile, service: DescService, packageName: string
   const Inject = f.import("Inject", "@nestjs/common");
   const ClientGrpc = f.import("ClientGrpc", "@nestjs/microservices");
 
+
   f.print()
 
   f.print("export const INJECTED_", safeIdentifier(service.name).toUpperCase(), "_PACKAGE = '", packageName, "';");
@@ -137,7 +140,7 @@ function printClient(f: GeneratedFile, service: DescService, packageName: string
   f.print("export class ", safeIdentifier(service.name), "Client implements ", OnModuleInit, ", ", Controller, " {");
   f.print()
 
-  f.print("private client: any; //I Know, it's because of nestjs/microservice insisting one verything being observables");
+  f.print("private client: any; //I Know, it's because of nestjs/microservice insisting one everything being observables");
   f.print()
 
   f.print("constructor(@", Inject, "(INJECTED_", safeIdentifier(service.name).toUpperCase(), "_PACKAGE) ", "private grpc: ", ClientGrpc, ") {}");
