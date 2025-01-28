@@ -1,6 +1,6 @@
 {
   "name": "@pandelis/protoc-gen-nestjs",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "description": "The code generator for Protocol Buffers for NestJS",
   "bin": {
     "protoc-gen-nestjs": "bin/protoc-gen-nestjs"
@@ -8,7 +8,6 @@
   "scripts": {
     "clean": "rm -rf ./dist/*",
     "build": "tsc -p tsconfig.json",
-    "push:docker": "docker buildx build --push --platform linux/amd64 --build-arg VERSION=${VERSION} -t plugins.buf.build/yuku/nestjs:${VERSION} .",
     "fix:prettier": "prettier --write ."
   },
   "files": [
