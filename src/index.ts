@@ -14,13 +14,34 @@ function generateTs(schema: Schema) {
   for (const file of schema.files) {
     const f = schema.generateFile(file.name + "_nestjs.ts");
     f.preamble(file);
+    printOtelMetadata(f);
     // Convert the Message ImportSymbol to a type-only ImportSymbol
     for (const service of file.services) {
-      printService(f, service);
 
+      printService(f, service);
       printClient(f, service, schema.proto.sourceFileDescriptors[0].package);
     }
   }
+}
+
+
+function printOtelMetadata(f: GeneratedFile) {
+  const trace = f.import("trace", "@opentelemetry/api");
+  const Metadata = f.import("Metadata", "@grpc/grpc-js");
+
+  f.print`export function getTracingMetadata() {`
+  f.print`  const activeSpan = ${trace}.getActiveSpan()`
+  f.print`  const metadata = new ${Metadata}()`
+  f.print`  if (activeSpan) {
+    const spanContext = activeSpan.spanContext()
+    metadata.set(
+      "traceparent",
+      \`00-\${spanContext.traceId}-\${spanContext.spanId}-\${spanContext.traceFlags.toString().padStart(2, "0")}\`,
+    )
+  }
+
+  return metadata`
+  f.print`}`
 }
 
 function printService(f: GeneratedFile, service: DescService) {
@@ -97,7 +118,6 @@ function printClientMethod(f: GeneratedFile, method: DescMethod) {
   const firstValueFrom = f.import("firstValueFrom", "rxjs");
   const inputType = f.importShape(method.input);
   const outputType = f.importShape(method.output);
-  const Metadata = f.import("Metadata", "@grpc/grpc-js");
 
   const isStreamReq = ['bidi_streaming', 'client_streaming'].includes(method.methodKind);
   const isStreamRes = method.methodKind !== 'unary';
@@ -107,7 +127,7 @@ function printClientMethod(f: GeneratedFile, method: DescMethod) {
   const resType = isStreamRes ? [Observable, "<", outputType, ">"] : ["Promise<", outputType, ">"];
 
   f.print(f.jsDoc(method, "  "));
-  f.print`  ${method.localName}(request: ${reqType}, metadata = new ${Metadata}()): ${resType} {`;
+  f.print`  ${method.localName}(request: ${reqType}, metadata = getTracingMetadata()): ${resType} {`;
 
   if (isStreamRes) {
     f.print("    return this.client.", method.localName, "(request, metadata);");
@@ -156,6 +176,5 @@ function printClient(f: GeneratedFile, service: DescService, packageName: string
     printClientMethod(f, method);
   });
   f.print("}");
-
 
 }
