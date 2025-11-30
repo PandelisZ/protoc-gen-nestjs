@@ -12,19 +12,19 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@bufbuild/protoc-gen-es": "^2.2.3",
+    "@bufbuild/protoc-gen-es": "^2.10.1",
     "@pandelis/protoc-gen-nestjs": "workspace:*",
-    "@types/node": "^22.13.4",
-    "tsx": "^4.19.2"
+    "@types/node": "^24.10.1",
+    "tsx": "^4.20.6"
   },
   "dependencies": {
-    "@bufbuild/protobuf": "^2.2.3",
-    "@grpc/grpc-js": "^1.12.6",
-    "@nestjs/common": "^11.0.10",
-    "@nestjs/core": "^11.0.10",
-    "@nestjs/microservices": "^11.0.10",
-    "@nestjs/platform-express": "^11.0.10",
+    "@bufbuild/protobuf": "^2.10.1",
+    "@grpc/grpc-js": "^1.14.1",
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/core": "^11.1.9",
+    "@nestjs/microservices": "^11.1.9",
+    "@nestjs/platform-express": "^11.1.9",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.2"
   }
 }

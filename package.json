@@ -1,6 +1,6 @@
 {
   "name": "@pandelis/protoc-gen-nestjs",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "The code generator for Protocol Buffers for NestJS",
   "bin": {
     "protoc-gen-nestjs": "bin/protoc-gen-nestjs"
@@ -27,14 +27,14 @@
   "author": "Yuku Kotani (yukukotani@gmail.com)",
   "license": "Apache-2.0",
   "dependencies": {
-    "@bufbuild/protobuf": "^2.2.3",
-    "@bufbuild/protoplugin": "^2.2.3",
-    "@grpc/grpc-js": "^1.12.6",
+    "@bufbuild/protobuf": "^2.10.1",
+    "@bufbuild/protoplugin": "^2.10.1",
+    "@grpc/grpc-js": "^1.14.1",
     "@opentelemetry/api": "^1.9.0"
   },
   "devDependencies": {
-    "prettier": "^3.5.1",
-    "typescript": "^5.7.3"
+    "prettier": "^3.7.3",
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "@bufbuild/protobuf": "^2.2.3"
