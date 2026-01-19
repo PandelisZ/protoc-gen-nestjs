@@ -38,9 +38,7 @@ function printOtelMetadata(f: GeneratedFile) {
       "traceparent",
       \`00-\${spanContext.traceId}-\${spanContext.spanId}-\${spanContext.traceFlags.toString().padStart(2, "0")}\`,
     )
-    metadata.set("x-b3-traceid", spanContext.traceId)
-    metadata.set("x-b3-spanid", spanContext.spanId)
-    metadata.set("x-b3-sampled", "1")
+    metadata.set("b3", \`\${spanContext.traceId}-\${spanContext.spanId}-1\`)
   }
 
   return metadata`
