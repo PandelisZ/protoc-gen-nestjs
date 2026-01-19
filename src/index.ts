@@ -40,7 +40,7 @@ function printOtelMetadata(f: GeneratedFile) {
     )
     metadata.set("x-b3-traceid", spanContext.traceId)
     metadata.set("x-b3-spanid", spanContext.spanId)
-    metadata.set("x-b3-sampled", (spanContext.traceFlags & 1).toString())
+    metadata.set("x-b3-sampled", "1")
   }
 
   return metadata`
