@@ -1,6 +1,6 @@
 {
   "name": "@pandelis/protoc-gen-nestjs",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "The code generator for Protocol Buffers for NestJS",
   "bin": {
     "protoc-gen-nestjs": "bin/protoc-gen-nestjs"
@@ -23,6 +23,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PandelisZ/protoc-gen-nestjs.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "author": "Yuku Kotani (yukukotani@gmail.com)",
   "license": "Apache-2.0",
