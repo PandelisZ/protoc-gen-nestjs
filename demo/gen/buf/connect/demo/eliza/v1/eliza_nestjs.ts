@@ -28,6 +28,10 @@ export function getTracingMetadata() {
   const metadata = new Metadata()
   if (activeSpan) {
     const spanContext = activeSpan.spanContext()
+    metadata.set(
+      "traceparent",
+      `00-${spanContext.traceId}-${spanContext.spanId}-${spanContext.traceFlags.toString().padStart(2, "0")}`,
+    )
     metadata.set("x-b3-traceid", spanContext.traceId)
     metadata.set("x-b3-spanid", spanContext.spanId)
     metadata.set("x-b3-sampled", (spanContext.traceFlags & 1).toString())
